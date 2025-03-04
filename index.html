@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Livros</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Gerenciador de Livros</h1>
+        <nav>
+            <ul>
+                <li><a href="#adicionar">Adicionar Livro</a></li>
+                <li><a href="#listar">Listar Livros</a></li>
+                <li><a href="#editar">Editar Livro</a></li>
+                <li><a href="#remover">Remover Livro</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="adicionar">
+            <h2>Adicionar Livro</h2>
+            <input type="text" id="titulo" placeholder="Título do livro">
+            <input type="text" id="autor" placeholder="Autor do livro">
+            <button onclick="adicionarLivro()">Adicionar</button>
+        </section>
+
+        <section id="listar">
+            <h2>Listar Livros</h2>
+            <button onclick="listarLivros()">Listar</button>
+            <ul id="listaLivros"></ul>
+        </section>
+
+        <section id="editar">
+            <h2>Editar Livro</h2>
+            <input type="number" id="idEditar" placeholder="ID do livro">
+            <input type="text" id="novoTitulo" placeholder="Novo título">
+            <input type="text" id="novoAutor" placeholder="Novo autor">
+            <button onclick="editarLivro()">Editar</button>
+        </section>
+
+        <section id="remover">
+            <h2>Remover Livro</h2>
+            <input type="number" id="idRemover" placeholder="ID do livro">
+            <button onclick="removerLivro()">Remover</button>
+        </section>
+    </main>
+
+    <script>
+        async function adicionarLivro() {
+            const titulo = document.getElementById('titulo').value;
+            const autor = document.getElementById('autor').value;
+            await fetch('/adicionar_livro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ titulo, autor })
+            });
+            alert('Livro adicionado!');
+        }
+
+        async function listarLivros() {
+            const response = await fetch('/listar_livros');
+            const livros = await response.json();
+            const listaLivros = document.getElementById('listaLivros');
+            listaLivros.innerHTML = '';
+            livros.forEach(livro => {
+                const li = document.createElement('li');
+                li.textContent = `ID: ${livro[0]}, Título: ${livro[1]}, Autor: ${livro[2]}`;
+                listaLivros.appendChild(li);
+            });
+        }
+
+        async function editarLivro() {
+            const id = document.getElementById('idEditar').value;
+            const novoTitulo = document.getElementById('novoTitulo').value;
+            const novoAutor = document.getElementById('novoAutor').value;
+            await fetch(`/editar_livro/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ titulo: novoTitulo, autor: novoAutor })
+            });
+            alert('Livro editado!');
+        }
+
+        async function removerLivro() {
+            const id = document.getElementById('idRemover').value;
+            await fetch(`/remover_livro/${id}`, {
+                method: 'DELETE'
+            });
+            alert('Livro removido!');
+        }
+    </script>
+</body>
+</html>
