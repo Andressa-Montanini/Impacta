@@ -42,5 +42,19 @@ def listar_livros():
     conn.close()
     return jsonify(livros), 200
 
+# Funcionalidade 3: Editar Livro
+@app.route('/editar_livro/<int:id>', methods=['PUT'])
+def editar_livro(id):
+    novo_titulo = request.json['titulo']
+    novo_autor = request.json['autor']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('UPDATE livros SET titulo = %s, autor = %s WHERE id = %s', (novo_titulo, novo_autor, id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({'message': 'Livro editado com sucesso!'}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)
