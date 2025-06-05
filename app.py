@@ -55,6 +55,16 @@ def editar_livro(id):
     conn.close()
     return jsonify({'message': 'Livro editado com sucesso!'}), 200
 
+# Funcionalidade 4: Remover Livro
+@app.route('/remover_livro/<int:id>', methods=['DELETE'])
+def remover_livro(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM livros WHERE id = %s', (id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({'message': 'Livro removido com sucesso!'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
